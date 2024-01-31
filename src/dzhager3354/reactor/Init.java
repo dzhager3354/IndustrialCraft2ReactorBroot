@@ -27,7 +27,7 @@ public class Init {
                     component.setCode('e');
                     break;
                 case 'f':
-                    component = new ComponentHeatVent(4, 10000);
+                    component = new ComponentRodThorium(4, 10000);
                     component.setCode('f');
                     break;
                 case 'm':
@@ -52,12 +52,15 @@ public class Init {
         }
         return res.toString();
     }
-    public static int getRodsCount(Reactor reactor) {
+    public static int getRodsCount(char[] chars) {
         int sum = 0;
         for (int i = 0; i < 54; i++) {
-            Component component = reactor.getComponent(i % 9, i / 9);
-            if (component instanceof ComponentRod) {
-                sum += ((ComponentRod) component).getRods();
+            if (chars[i] == 'd') {
+                sum ++;
+            } else if (chars[i] == 'e') {
+                sum += 2;
+            } else if (chars[i] == 'f') {
+                sum += 4;
             }
         }
         return sum;

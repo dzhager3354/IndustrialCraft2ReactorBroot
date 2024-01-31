@@ -12,13 +12,13 @@ public class BruteThread implements Runnable {
     public void run() {
         a:while (codes != null) {
             if (!isNewCode) continue;
-            Reactor reactor = new Reactor();
-            Init.init(reactor, codes);
-            int rods = Init.getRodsCount(reactor);
-            if (rods < 20 || rods > 50 || Controller.controller.getMaxRods() > rods) {
+            int rods = Init.getRodsCount(codes);
+            if (rods < 15 || rods > 44 || Controller.controller.getMaxRods() > rods) {
                 isNewCode = false;
                 continue;
             }
+            Reactor reactor = new Reactor();
+            Init.init(reactor, codes);
             for (int i = 0; i < 10000; i++) {
                 reactor.process();
                 if (reactor.isExplode()) {

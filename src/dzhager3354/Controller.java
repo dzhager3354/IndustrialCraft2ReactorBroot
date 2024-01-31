@@ -24,7 +24,7 @@ public class Controller implements Runnable {
 
     @Override
     public void run() {
-        language = new char[]{'x', 'y', 'd', 'e', 'f', 'm', 'o'};
+        language = new char[]{'f','x','y','m','o','e','d'};
         for (int i = 0; i < 54; i++) {
             chars[i] = language[0];
         }
@@ -76,5 +76,9 @@ public class Controller implements Runnable {
 
     public int getMaxRods() {
         return maxRods;
+    }
+
+    public String currentSeed() {
+        return new String(chars);
     }
 }
