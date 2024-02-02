@@ -15,18 +15,23 @@ public abstract class ComponentRod extends Component{
     @Override
     public void process(int x, int y, Reactor reactor, boolean heatRun) {
         int basePulse = 1 + rods/2;
-        for (int iter = 0; iter < rods; iter++) {
+        for (int iter = 0; iter < rods; ++iter) {
             int pulses = basePulse;
             if (!heatRun) {
-                for (int i = 0; i < pulses; i++) {
+                for (int i = 0; i < pulses; ++i) {
                     acceptUraniumPulse(x, y, x, y, reactor, false);
                 }
+                checkPulseable(reactor, x-1, y, x, y, false);
+                checkPulseable(reactor, x+1, y, x, y, false);
+                checkPulseable(reactor, x, y-1, x, y, false);
+                checkPulseable(reactor, x, y+1, x, y, false);
             } else {
-                pulses += checkPulseable(reactor, x-1, y, x, y, false) +
-                        checkPulseable(reactor, x+1, y, x, y, false) +
-                        checkPulseable(reactor, x, y-1, x, y, false) +
-                        checkPulseable(reactor, x, y+1, x, y, false);
-                double heat = (pulses * pulses + pulses) * 2 + 4;
+                pulses += checkPulseable(reactor, x-1, y, x, y, true) +
+                        checkPulseable(reactor, x+1, y, x, y, true) +
+                        checkPulseable(reactor, x, y-1, x, y, true) +
+                        checkPulseable(reactor, x, y+1, x, y, true);
+                double heat = (pulses * pulses + pulses) * 2;
+                heat = getFinalHeat(heat, rods);
 
                 List<Component> components = new ArrayList<>();
                 checkHeatAcceptor(reactor, x-1, y, components);
@@ -88,6 +93,8 @@ public abstract class ComponentRod extends Component{
         }
         return 0;
     }
+
+    public abstract double getFinalHeat(double heat, int cells);
 
     public int getRods() {
         return rods;

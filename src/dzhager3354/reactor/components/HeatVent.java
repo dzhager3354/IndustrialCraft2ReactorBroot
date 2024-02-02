@@ -22,7 +22,7 @@ public class HeatVent extends ItemReactorHeatStorage {
                 }
                 rheat -= reactorDrain;
                 reactorDrain = alterHeat(x, y, reactor, reactorDrain);
-                if (reactorDrain > 0) return;
+                if (alterHeat(x, y ,reactor, reactorDrain) > 0) return;
                 reactor.setHeat(rheat);
             }
             alterHeat(x, y, reactor, -selfVent);

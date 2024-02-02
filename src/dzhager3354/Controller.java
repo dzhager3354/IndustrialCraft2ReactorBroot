@@ -1,61 +1,71 @@
 package dzhager3354;
 
 import dzhager3354.reactor.Init;
-import dzhager3354.reactor.Reactor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Controller implements Runnable {
-    public static final Controller controller = new Controller();
     private volatile int maxRods;
     private char[] chars = new char[54];
     private char[] language;
-    private List<BruteThread> threads = new ArrayList<>();
+    private int id;
+    private int count;
+    private int[] rodsArr = new int[3];
 
-    private Controller(){}
+    public Controller(int id, int count){
+        this.id = id;
+        this.count = count;
+    }
 
     public void setMaxRods(int rods, String str) {
         if (maxRods <= rods) {
             maxRods = rods;
-            System.out.println("new max rod: " + maxRods + " " + str);
+            System.out.println(id + ": new max rod: " + maxRods + " " + str);
         }
     }
 
     @Override
     public void run() {
-        language = new char[]{'f','x','y','m','o','e','d'};
-        for (int i = 0; i < 54; i++) {
-            chars[i] = language[0];
+        language = new char[]{'f','e','d','m','o','x','y'};
+        for (int i = 0; i < 53; i++) {
+            chars[i] = 'f';
         }
-        for (int i = 0; i < 12; i++) {
-            BruteThread thread = new BruteThread();
-            threads.add(thread);
-            thread.setCodes(chars);
-            tick(0);
-            new Thread(thread).start();
-        }
+        chars[52] = language[id*4 % language.length];
+        chars[53] = language[id*4 / language.length];
+        rodsArr[0] = Init.getRodsCount(chars);
         br:while (true) {
-            for (BruteThread thread : threads) {
-                if (!thread.isNewCode()) {
-                    thread.setCodes(chars);
-                    tick(0);
-                    if (isEnd()){
-                        for (BruteThread thread1 : threads) {
-                            thread1.setCodes(null);
-                        }
-                        break br;
-                    }
-                }
+            ticks();
+            Thread thread = new Thread(new BruteThread(this));
+            thread.start();
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (isEnd()) {
+                System.out.println("End work thread" + id);
+                break br;
             }
         }
     }
 
-    private void tick(int i) {
+    private void ticks() {
+        do {
+            tick(0, 0);
+        } while (rodsArr[0] < 15 || rodsArr[0] > 45 || rodsArr[0] < maxRods);
+    }
+
+    private void tick(int i, int thread) {
+        if (i == chars.length) return;
         if (getPositionChar(chars[i]) == language.length - 1) {
             chars[i] = language[0];
-            tick(i+1);
+            rodsArr[thread] = rodsArr[thread] + 4;
+            tick(i+1, thread);
         } else {
+            if (chars[i] == 'f') {
+                rodsArr[thread] -= 2;
+            }
+            else if (chars[i] == 'e' || chars[i] == 'd') {
+                rodsArr[thread] -= 1;
+            }
             chars[i] = language[getPositionChar(chars[i])+1];
         }
     }
@@ -68,10 +78,8 @@ public class Controller implements Runnable {
     }
 
     private boolean isEnd() {
-        for (int i = 0; i < 54; i++) {
-            if (chars[i] != language[0]) return false;
-        }
-        return true;
+        int res = id * 4 + count;
+        return chars[52] == language[res % language.length] && chars[53] == language[res / language.length];
     }
 
     public int getMaxRods() {
@@ -79,6 +87,6 @@ public class Controller implements Runnable {
     }
 
     public String currentSeed() {
-        return new String(chars);
+        return id + " : " + new String(chars);
     }
 }

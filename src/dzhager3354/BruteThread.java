@@ -8,12 +8,18 @@ import java.util.Arrays;
 public class BruteThread implements Runnable {
     private volatile char[] codes;
     private boolean isNewCode;
+    private Controller controller;
+
+    public BruteThread(Controller controller) {
+        this.controller = controller;
+    }
+
     @Override
     public void run() {
         a:while (codes != null) {
             if (!isNewCode) continue;
             int rods = Init.getRodsCount(codes);
-            if (rods < 15 || rods > 44 || Controller.controller.getMaxRods() > rods) {
+            if (rods < 15 || rods > 44 || controller.getMaxRods() > rods) {
                 isNewCode = false;
                 continue;
             }
@@ -26,7 +32,7 @@ public class BruteThread implements Runnable {
                     continue a;
                 }
             }
-            Controller.controller.setMaxRods(rods, new String(codes));
+            controller.setMaxRods(rods, new String(codes));
             isNewCode = false;
         }
     }

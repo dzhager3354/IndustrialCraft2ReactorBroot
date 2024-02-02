@@ -11,4 +11,9 @@ public class ComponentRodThorium extends ComponentRod {
     public boolean acceptUraniumPulse(int x, int y, int pulseX, int pulseY, Reactor reactor, boolean heatRun) {
         return true;
     }
+
+    @Override
+    public double getFinalHeat(double heat, int cells) {
+        return heat + 4*cells;
+    }
 }

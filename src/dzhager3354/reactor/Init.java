@@ -38,6 +38,9 @@ public class Init {
                     component = new HeatExchanger(5000, 36, 0);
                     component.setCode('o');
                     break;
+                case '0':
+                    component = null;
+                    break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + ch[i]);
             }
